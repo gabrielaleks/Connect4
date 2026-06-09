@@ -18,7 +18,10 @@ qt_add_executable(Connect4
     ConfigScreen.cpp
     GameScreen.h
     GameScreen.cpp
+    BoardWidget.h
+    BoardWidget.cpp
     Color.h
+    BoardConfig.h
 )
 
 qt_add_resources(Connect4 "resources"

@@ -63,10 +63,10 @@ void MainWindow::showGameScreen(
     QString player2Name,
     Color player2Color
 ) {
-    gameScreen->setPlayer1Name(player1Name.toStdString());
-    gameScreen->setPlayer1Color(player1Color);
-    gameScreen->setPlayer2Name(player2Name.toStdString());
-    gameScreen->setPlayer2Color(player2Color);
+    gameScreen->setPlayer1(player1Name.toStdString(), player1Color);
+    gameScreen->setPlayer2(player2Name.toStdString(), player2Color);
+    gameScreen->setActivePlayer(gameScreen->getPlayer1());
+
     stack->setCurrentWidget(gameScreen);
 }
 

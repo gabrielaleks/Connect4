@@ -1,36 +1,61 @@
 #ifndef GAMESCREEN_H
 #define GAMESCREEN_H
 
-#include <QLabel>
+#include <QVBoxLayout>
 #include <QPushButton>
+#include <QPainter>
+#include <QPainterPath>
 #include "BaseScreen.h"
+#include "BoardWidget.h"
 #include "Color.h"
 
-#define MARGIN_SIZE 5
-#define ROW_COUNT 6
-#define COLUMN_COUNT 7
+#define TOP_AREA_HEIGHT 50
 
 class GameScreen : public BaseScreen {
     Q_OBJECT
 
+private:
+    void paintEvent(QPaintEvent* event) override;
+    bool isWinner(int row, int column);
+    int countConsecutive(
+        int row,
+        int col,
+        int rowDir,
+        int colDir,
+        CellState playerState
+    );
+
+    BoardWidget* boardWidget;
+    QVBoxLayout* layout;
+
+    QString _topText;
+    QColor _topColor;
+
+    struct Player {
+        int index;
+        std::string name;
+        Color color;
+    };
+
+    Player _player1;
+    Player _player2;
+    Player _activePlayer;
+    CellState _gameState[ROW_COUNT][COLUMN_COUNT] = {{CellState::Empty}};
+    bool _gameOver = false;
+    int _piecesPlacedCounter = 0;
+
 public:
     explicit GameScreen(QWidget* parent = nullptr);
 
-    void setPlayer1Name(std::string player1Name);
-    void setPlayer1Color(Color player1Color);
-    void setPlayer2Name(std::string player2Name);
-    void setPlayer2Color(Color player2Color);
+    void setPlayer1(std::string name, Color color);
+    void setPlayer2(std::string name, Color color);
+    Player getPlayer1();
+    Player getPlayer2();
+    void setActivePlayer(Player activePlayer);
+    void updateTopText(QString text, std::optional<Color> color = std::nullopt);
 
-private:
-    void paintEvent(QPaintEvent* event) override;
-
-    std::string _player1Name;
-    Color _player1Color;
-    std::string _player2Name;
-    Color _player2Color;
-
-signals:
-    void configButtonClicked();
+private slots:
+    void handleColumnSelection(int selectedColumn);
 };
 
 #endif // GAMESCREEN_H
