@@ -71,9 +71,8 @@ ConfigScreen::ConfigScreen(QWidget* parent) : BaseScreen(parent) {
         &ConfigScreen::onPlayButtonClicked
     );
 
-    // --- TEST ---
-    player1NameField->setText("Gabriel");
-    player2NameField->setText("Ayumi");
+    player1NameField->setText("Player 1");
+    player2NameField->setText("Player 2");
 }
 
 ConfigScreen::PlayerSection ConfigScreen::createPlayerSection(const QString& labelText, Color defaultColor, const QFont& font) {
@@ -118,11 +117,11 @@ void ConfigScreen::onPlayButtonClicked() {
 
 void ConfigScreen::checkIfEmpty() {
     if (
-        player1NameField->text() == "" ||
-        player2NameField->text() == ""
-        ) {
+        player1NameField->text().trimmed() == "" ||
+        player2NameField->text().trimmed() == ""
+    ) {
         playButton->setEnabled(false);
-          playButton->setStyleSheet("background-color: rgb(200, 190, 140); color: rgb(150, 80, 82);");
+        playButton->setStyleSheet("background-color: rgb(200, 190, 140); color: rgb(150, 80, 82);");
     } else {
         playButton->setEnabled(true);
         playButton->setStyleSheet("background-color: rgb(249, 234, 164); color: rgb(71, 0, 2);");

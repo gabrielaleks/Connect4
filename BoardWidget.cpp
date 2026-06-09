@@ -55,7 +55,7 @@ void BoardWidget::paintEvent(QPaintEvent* event) {
     if (_hoveredColumn > -1 && !_isGameOver) {
         int columnCenter =  (getGridMetrics().cellSize * (_hoveredColumn + 1)) + (MARGIN_SIZE * 4);
 
-        int arrowY = getGridMetrics().startY - 5 * MARGIN_SIZE;
+        int arrowY = getGridMetrics().startY - 4 * MARGIN_SIZE;
         int arrowSize = 15;
 
         QPointF tip(columnCenter, arrowY + arrowSize);

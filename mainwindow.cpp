@@ -49,6 +49,13 @@ MainWindow::MainWindow(QWidget *parent)
         this,
         &MainWindow::showGameScreen
     );
+
+    connect(
+        gameScreen,
+        &GameScreen::configButtonClicked,
+        this,
+        &MainWindow::showConfigScreen
+    );
 }
 
 MainWindow::~MainWindow() = default;
@@ -63,6 +70,7 @@ void MainWindow::showGameScreen(
     QString player2Name,
     Color player2Color
 ) {
+    gameScreen->reset();
     gameScreen->setPlayer1(player1Name.toStdString(), player1Color);
     gameScreen->setPlayer2(player2Name.toStdString(), player2Color);
     gameScreen->setActivePlayer(gameScreen->getPlayer1());

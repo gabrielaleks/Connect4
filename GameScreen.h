@@ -9,7 +9,7 @@
 #include "BoardWidget.h"
 #include "Color.h"
 
-#define TOP_AREA_HEIGHT 50
+#define TOP_AREA_HEIGHT 30
 
 class GameScreen : public BaseScreen {
     Q_OBJECT
@@ -43,6 +43,8 @@ private:
     CellState _gameState[ROW_COUNT][COLUMN_COUNT] = {{CellState::Empty}};
     bool _gameOver = false;
     int _piecesPlacedCounter = 0;
+    QPushButton* _resetButton;
+    QPushButton* _goBackToConfigButton;
 
 public:
     explicit GameScreen(QWidget* parent = nullptr);
@@ -53,9 +55,14 @@ public:
     Player getPlayer2();
     void setActivePlayer(Player activePlayer);
     void updateTopText(QString text, std::optional<Color> color = std::nullopt);
+    void reset();
 
 private slots:
     void handleColumnSelection(int selectedColumn);
+    void onResetButtonClicked();
+
+signals:
+    void configButtonClicked();
 };
 
 #endif // GAMESCREEN_H

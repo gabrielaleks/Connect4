@@ -1,5 +1,6 @@
 #include "GameScreen.h"
 #include <QString>
+#include <QMessageBox>
 
 GameScreen::GameScreen(QWidget* parent) : BaseScreen(parent) {
     layout = new QVBoxLayout(this);
@@ -10,14 +11,43 @@ GameScreen::GameScreen(QWidget* parent) : BaseScreen(parent) {
         QSizePolicy::Expanding
     );
 
+    _resetButton = new QPushButton("Reset", this);
+    _resetButton->setFixedSize(60, 30);
+    _resetButton->setStyleSheet("background-color: rgb(200, 190, 140); color: rgb(150, 80, 82);");
+
+    _goBackToConfigButton = new QPushButton("Go to config", this);
+    _goBackToConfigButton->setFixedSize(100, 30);
+    _goBackToConfigButton->setStyleSheet("background-color: rgb(200, 190, 140); color: rgb(150, 80, 82);");
+
     layout->addSpacing(TOP_AREA_HEIGHT);
     layout->addWidget(boardWidget);
+
+    QHBoxLayout* buttonsLayout = new QHBoxLayout();
+    buttonsLayout->addStretch();
+    buttonsLayout->addWidget(_resetButton);
+    buttonsLayout->addWidget(_goBackToConfigButton);
+    buttonsLayout->addStretch();
+    layout->addLayout(buttonsLayout);
 
     connect(
         boardWidget,
         &BoardWidget::columnSelected,
         this,
         &GameScreen::handleColumnSelection
+    );
+
+    connect(
+        _resetButton,
+        &QPushButton::clicked,
+        this,
+        &GameScreen::onResetButtonClicked
+    );
+
+    connect(
+        _goBackToConfigButton,
+        &QPushButton::clicked,
+        this,
+        &GameScreen::configButtonClicked
     );
 }
 
@@ -144,6 +174,33 @@ void GameScreen::updateTopText(QString text, std::optional<Color> color) {
     }
 
     update();
+}
+
+void GameScreen::onResetButtonClicked() {
+    if (!_gameOver) {
+        auto response = QMessageBox::question(
+            this,
+            "Reset game",
+            "Are you sure you want to reset the game?",
+            QMessageBox::Yes | QMessageBox::No
+            );
+
+        if (response != QMessageBox::Yes) {
+            return;
+        }
+    }
+
+    reset();
+    setActivePlayer(_player1);
+}
+
+void GameScreen::reset() {
+    memset(_gameState, CellState::Empty, sizeof(_gameState));
+    _gameOver = false;
+    _piecesPlacedCounter = 0;
+    boardWidget->setGameOver(false);
+    boardWidget->setGameState(_gameState);
+    boardWidget->update();
 }
 
 void GameScreen::paintEvent(QPaintEvent* event) {
