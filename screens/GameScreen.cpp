@@ -33,7 +33,7 @@ GameScreen::GameScreen(QWidget* parent) : BaseScreen(parent) {
         boardWidget,
         &BoardWidget::columnSelected,
         this,
-        &GameScreen::handleColumnSelection
+        [this](int col) { handleColumnSelection(col, false); }
     );
 
     connect(
@@ -51,8 +51,22 @@ GameScreen::GameScreen(QWidget* parent) : BaseScreen(parent) {
     );
 }
 
-void GameScreen::handleColumnSelection(int selectedColumn) {
+void GameScreen::handleRemoteMove(int column) {
+    handleColumnSelection(column, true);
+}
+
+void GameScreen::setNetworkClient(NetworkClient* client, int localPlayerIndex) {
+    _networkClient = client;
+    _localPlayerIndex = localPlayerIndex;
+    if (_networkClient)
+        connect(_networkClient, &NetworkClient::moveReceived, this, &GameScreen::handleRemoteMove);
+}
+
+void GameScreen::handleColumnSelection(int selectedColumn, bool fromNetwork) {
     if (_gameOver) return;
+
+    if (_networkClient && !fromNetwork && _activePlayer.index != _localPlayerIndex)
+        return;
 
     int selectedRow = -1;
 
@@ -69,6 +83,9 @@ void GameScreen::handleColumnSelection(int selectedColumn) {
     if (selectedRow == -1) {
         return;
     }
+
+    if (!fromNetwork && _networkClient)
+        _networkClient->sendMove(selectedColumn);
 
     _piecesPlacedCounter++;
 

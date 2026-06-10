@@ -7,6 +7,7 @@
 #include <QPainterPath>
 #include "BaseScreen.h"
 #include "BoardWidget.h"
+#include "NetworkClient.h"
 #include "Color.h"
 
 #define TOP_AREA_HEIGHT 30
@@ -46,6 +47,9 @@ private:
     QPushButton* _resetButton;
     QPushButton* _goBackToConfigButton;
 
+    NetworkClient* _networkClient = nullptr;
+    int _localPlayerIndex = 0;
+
 public:
     explicit GameScreen(QWidget* parent = nullptr);
 
@@ -56,9 +60,11 @@ public:
     void setActivePlayer(Player activePlayer);
     void updateTopText(QString text, std::optional<Color> color = std::nullopt);
     void reset();
+    void setNetworkClient(NetworkClient* client, int localPlayerIndex);
 
 private slots:
-    void handleColumnSelection(int selectedColumn);
+    void handleColumnSelection(int selectedColumn, bool fromNetwork = false);
+    void handleRemoteMove(int column);
     void onResetButtonClicked();
 
 signals:

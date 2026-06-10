@@ -53,9 +53,10 @@ void BoardWidget::paintEvent(QPaintEvent* event) {
     }
 
     if (_hoveredColumn > -1 && !_isGameOver) {
-        int columnCenter =  (getGridMetrics().cellSize * (_hoveredColumn + 1)) + (MARGIN_SIZE * 4);
+        auto metrics = getGridMetrics();
+        int columnCenter = metrics.startX + metrics.cellSize * _hoveredColumn + metrics.cellSize / 2;
 
-        int arrowY = getGridMetrics().startY - 4 * MARGIN_SIZE;
+        int arrowY = metrics.startY - 4 * MARGIN_SIZE;
         int arrowSize = 15;
 
         QPointF tip(columnCenter, arrowY + arrowSize);
@@ -90,10 +91,13 @@ void BoardWidget::mouseMoveEvent(QMouseEvent* event) {
 BoardWidget::GridMetrics BoardWidget::getGridMetrics() const {
     GridMetrics gridMetrics;
 
-    gridMetrics.gridSize = width() * 0.80;
-    gridMetrics.cellSize = gridMetrics.gridSize / COLUMN_COUNT;
-    gridMetrics.startX = (width() - gridMetrics.gridSize) / 2;
-    gridMetrics.endX = width() - gridMetrics.startX;
+    float cellByWidth  = (width()  * 0.80) / COLUMN_COUNT;
+    float cellByHeight = (height() * 0.80) / ROW_COUNT;
+    gridMetrics.cellSize = std::min(cellByWidth, cellByHeight);
+
+    gridMetrics.gridSize = gridMetrics.cellSize * COLUMN_COUNT;
+    gridMetrics.startX = (width()  - gridMetrics.gridSize) / 2;
+    gridMetrics.endX   = width() - gridMetrics.startX;
     gridMetrics.startY = (height() - gridMetrics.cellSize * ROW_COUNT) / 2;
 
     return gridMetrics;

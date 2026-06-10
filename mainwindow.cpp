@@ -1,8 +1,9 @@
 #include "mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-{
+#include <QMessageBox>
+
+MainWindow::MainWindow(QWidget* parent)
+    : QMainWindow(parent) {
     centralWidget = new QWidget();
 
     layout = new QVBoxLayout(centralWidget);
@@ -24,7 +25,6 @@ MainWindow::MainWindow(QWidget *parent)
     stack->addWidget(configScreen);
     stack->addWidget(gameScreen);
 
-
     stack->setCurrentWidget(startScreen);
 
     layout->addWidget(stack);
@@ -33,34 +33,39 @@ MainWindow::MainWindow(QWidget *parent)
     setCentralWidget(centralWidget);
 
     resize(SCREEN_SIZE, SCREEN_SIZE);
-    setFixedSize(size());
     setWindowTitle("Connect4");
 
     connect(
         startScreen,
         &StartScreen::startButtonClicked,
         this,
-        &MainWindow::showConfigScreen
-    );
+        &MainWindow::showConfigScreen);
 
     connect(
         configScreen,
         &ConfigScreen::playButtonClicked,
         this,
-        &MainWindow::showGameScreen
-    );
+        &MainWindow::showGameScreen);
+
+    connect(
+        configScreen,
+        &ConfigScreen::onlinePlayButtonClicked,
+        this,
+        &MainWindow::showOnlineGameScreen);
 
     connect(
         gameScreen,
         &GameScreen::configButtonClicked,
         this,
-        &MainWindow::showConfigScreen
-    );
+        &MainWindow::showConfigScreen);
 }
 
 MainWindow::~MainWindow() = default;
 
 void MainWindow::showConfigScreen() {
+    delete _networkClient;
+    _networkClient = nullptr;
+    gameScreen->setNetworkClient(nullptr, 0);
     stack->setCurrentWidget(configScreen);
 }
 
@@ -68,8 +73,8 @@ void MainWindow::showGameScreen(
     QString player1Name,
     Color player1Color,
     QString player2Name,
-    Color player2Color
-) {
+    Color player2Color) {
+    gameScreen->setNetworkClient(nullptr, 0);
     gameScreen->reset();
     gameScreen->setPlayer1(player1Name.toStdString(), player1Color);
     gameScreen->setPlayer2(player2Name.toStdString(), player2Color);
@@ -78,17 +83,25 @@ void MainWindow::showGameScreen(
     stack->setCurrentWidget(gameScreen);
 }
 
+void MainWindow::showOnlineGameScreen(
+    QString player1Name,
+    Color player1Color,
+    QString player2Name,
+    Color player2Color,
+    QString serverIp,
+    int localPlayerIndex) {
+    delete _networkClient;
+    _networkClient = new NetworkClient(serverIp, 12345, localPlayerIndex, this);
 
-/** Requirements
- * - Players annouce themselves at the start of the game
- * - Each player gets a color
- * - Players alternate their turns
- * - The state of the game must be displayed by the UI
- * - The program must determine the winner
- * - The game must also be playable online
- *
- * Extras:
- * - Button to restart game (with confirmation)
- * - Timer
- * - The game can be saved and replayed later
-*/
+    connect(_networkClient, &NetworkClient::errorOccurred, this, [this](const QString& msg) {
+        QMessageBox::warning(this, "Network error", msg);
+    });
+
+    gameScreen->reset();
+    gameScreen->setPlayer1(player1Name.toStdString(), player1Color);
+    gameScreen->setPlayer2(player2Name.toStdString(), player2Color);
+    gameScreen->setNetworkClient(_networkClient, localPlayerIndex);
+    gameScreen->setActivePlayer(gameScreen->getPlayer1());
+
+    stack->setCurrentWidget(gameScreen);
+}

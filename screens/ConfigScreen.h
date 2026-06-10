@@ -8,6 +8,7 @@
 #include <QPushButton>
 #include <QLineEdit>
 #include <QComboBox>
+#include <QCheckBox>
 #include <QStandardItemModel>
 #include "Color.h"
 
@@ -33,6 +34,11 @@ private:
 
     QPushButton* playButton;
 
+    QCheckBox* _onlineModeCheckbox;
+    QWidget*   _onlineOptionsWidget;
+    QLineEdit* _serverIpField;
+    QComboBox* _roleDropdown;
+
     int player1PrevColorIndex;
     int player2PrevColorIndex;
 
@@ -50,6 +56,7 @@ private slots:
     void checkIfEmpty();
     void makeChosenColorsReadOnly();
     void onPlayButtonClicked();
+    void onOnlineModeToggled(bool checked);
 
 signals:
     void playButtonClicked(
@@ -57,6 +64,14 @@ signals:
         Color player1Color,
         QString player2Name,
         Color player2Color
+    );
+    void onlinePlayButtonClicked(
+        QString player1Name,
+        Color player1Color,
+        QString player2Name,
+        Color player2Color,
+        QString serverIp,
+        int localPlayerIndex
     );
 };
 

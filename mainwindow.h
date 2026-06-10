@@ -8,6 +8,7 @@
 #include "StartScreen.h"
 #include "ConfigScreen.h"
 #include "GameScreen.h"
+#include "NetworkClient.h"
 
 class MainWindow : public QMainWindow
 {
@@ -26,6 +27,7 @@ private:
     ConfigScreen* configScreen;
     GameScreen* gameScreen;
     QLabel* author;
+    NetworkClient* _networkClient = nullptr;
 
 private slots:
     void showConfigScreen();
@@ -34,6 +36,14 @@ private slots:
         Color player1Color,
         QString player2Name,
         Color player2Color
+    );
+    void showOnlineGameScreen(
+        QString player1Name,
+        Color player1Color,
+        QString player2Name,
+        Color player2Color,
+        QString serverIp,
+        int localPlayerIndex
     );
 };
 

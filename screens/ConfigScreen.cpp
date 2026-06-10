@@ -25,6 +25,34 @@ ConfigScreen::ConfigScreen(QWidget* parent) : BaseScreen(parent) {
     player2NameField = p2.nameField;
     player2ColorDropdown = p2.colorDropdown;
 
+    // Online mode
+    _onlineModeCheckbox = new QCheckBox("Online mode", this);
+    _onlineModeCheckbox->setStyleSheet("color: rgb(249, 234, 164);");
+
+    _onlineOptionsWidget = new QWidget(this);
+    QHBoxLayout* onlineLayout = new QHBoxLayout(_onlineOptionsWidget);
+    onlineLayout->setContentsMargins(0, 0, 0, 0);
+
+    _serverIpField = new QLineEdit;
+    _serverIpField->setPlaceholderText("Server IP...");
+    _serverIpField->setText("127.0.0.1");
+    _serverIpField->setFixedWidth(150);
+    _serverIpField->setTextMargins(5, 0, 0, 0);
+
+    _roleDropdown = new QComboBox(this);
+    _roleDropdown->addItem("Player 1", 1);
+    _roleDropdown->addItem("Player 2", 2);
+    _roleDropdown->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+    onlineLayout->addStretch();
+    onlineLayout->addWidget(_serverIpField);
+    onlineLayout->addWidget(_roleDropdown);
+    onlineLayout->addStretch();
+    _onlineOptionsWidget->setVisible(false);
+
+    connect(_onlineModeCheckbox, &QCheckBox::toggled, this, &ConfigScreen::onOnlineModeToggled);
+    connect(_serverIpField, &QLineEdit::textChanged, this, &ConfigScreen::checkIfEmpty);
+
     // Play button
     playButton = new QPushButton("Play", this);
     playButton->setFixedSize(80, 40);
@@ -61,6 +89,8 @@ ConfigScreen::ConfigScreen(QWidget* parent) : BaseScreen(parent) {
     layout->addLayout(player1HorizontalLayout);
     layout->addWidget(player2Label);
     layout->addLayout(player2HorizontalLayout);
+    layout->addWidget(_onlineModeCheckbox, 0, Qt::AlignCenter);
+    layout->addWidget(_onlineOptionsWidget);
     layout->addWidget(playButton, 0, Qt::AlignCenter);
     layout->addStretch(2);
 
@@ -107,25 +137,43 @@ ConfigScreen::PlayerSection ConfigScreen::createPlayerSection(const QString& lab
 }
 
 void ConfigScreen::onPlayButtonClicked() {
-    emit playButtonClicked(
-        player1NameField->text(),
-        static_cast<Color>(player1ColorDropdown->currentData().toInt()),
-        player2NameField->text(),
-        static_cast<Color>(player2ColorDropdown->currentData().toInt())
-    );
+    if (_onlineModeCheckbox->isChecked()) {
+        emit onlinePlayButtonClicked(
+            player1NameField->text(),
+            static_cast<Color>(player1ColorDropdown->currentData().toInt()),
+            player2NameField->text(),
+            static_cast<Color>(player2ColorDropdown->currentData().toInt()),
+            _serverIpField->text(),
+            _roleDropdown->currentData().toInt()
+        );
+    } else {
+        emit playButtonClicked(
+            player1NameField->text(),
+            static_cast<Color>(player1ColorDropdown->currentData().toInt()),
+            player2NameField->text(),
+            static_cast<Color>(player2ColorDropdown->currentData().toInt())
+        );
+    }
 }
 
 void ConfigScreen::checkIfEmpty() {
-    if (
-        player1NameField->text().trimmed() == "" ||
-        player2NameField->text().trimmed() == ""
-    ) {
-        playButton->setEnabled(false);
-        playButton->setStyleSheet("background-color: rgb(200, 190, 140); color: rgb(150, 80, 82);");
-    } else {
+    bool namesReady = !player1NameField->text().trimmed().isEmpty()
+                   && !player2NameField->text().trimmed().isEmpty();
+    bool onlineReady = !_onlineModeCheckbox->isChecked()
+                    || !_serverIpField->text().trimmed().isEmpty();
+
+    if (namesReady && onlineReady) {
         playButton->setEnabled(true);
         playButton->setStyleSheet("background-color: rgb(249, 234, 164); color: rgb(71, 0, 2);");
+    } else {
+        playButton->setEnabled(false);
+        playButton->setStyleSheet("background-color: rgb(200, 190, 140); color: rgb(150, 80, 82);");
     }
+}
+
+void ConfigScreen::onOnlineModeToggled(bool checked) {
+    _onlineOptionsWidget->setVisible(checked);
+    checkIfEmpty();
 }
 
 void ConfigScreen::makeChosenColorsReadOnly() {

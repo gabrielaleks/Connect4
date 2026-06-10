@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.19)
 project(Connect4 LANGUAGES CXX)
 
-find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets Svg SvgWidgets)
+find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets Svg SvgWidgets Network)
 
 qt_standard_project_setup()
 
@@ -10,18 +10,27 @@ qt_add_executable(Connect4
     main.cpp
     mainwindow.cpp
     mainwindow.h
-    BaseScreen.h
-    BaseScreen.cpp
-    StartScreen.h
-    StartScreen.cpp
-    ConfigScreen.h
-    ConfigScreen.cpp
-    GameScreen.h
-    GameScreen.cpp
-    BoardWidget.h
-    BoardWidget.cpp
-    Color.h
-    BoardConfig.h
+    screens/BaseScreen.h
+    screens/BaseScreen.cpp
+    screens/StartScreen.h
+    screens/StartScreen.cpp
+    screens/ConfigScreen.h
+    screens/ConfigScreen.cpp
+    screens/GameScreen.h
+    screens/GameScreen.cpp
+    widgets/BoardWidget.h
+    widgets/BoardWidget.cpp
+    network/NetworkClient.h
+    network/NetworkClient.cpp
+    config/Color.h
+    config/BoardConfig.h
+)
+
+target_include_directories(Connect4 PRIVATE
+    screens
+    widgets
+    network
+    config
 )
 
 qt_add_resources(Connect4 "resources"
@@ -35,6 +44,7 @@ target_link_libraries(Connect4
         Qt::Widgets
         Qt::Svg
         Qt::SvgWidgets
+        Qt::Network
 )
 
 install(TARGETS Connect4
