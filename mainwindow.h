@@ -19,14 +19,14 @@ public:
     ~MainWindow() override;
 
 private:
-    QWidget* centralWidget;
-    QVBoxLayout* layout;
-    QStackedWidget* stack;
+    QWidget* _centralWidget;
+    QVBoxLayout* _layout;
+    QStackedWidget* _stack;
 
-    StartScreen* startScreen;
-    ConfigScreen* configScreen;
-    GameScreen* gameScreen;
-    QLabel* author;
+    StartScreen* _startScreen;
+    ConfigScreen* _configScreen;
+    GameScreen* _gameScreen;
+    QLabel* _author;
     NetworkClient* _networkClient = nullptr;
 
 private slots:

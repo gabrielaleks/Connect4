@@ -14,9 +14,9 @@ public:
     explicit StartScreen(QWidget* parent = nullptr);
 
 private:
-    QVBoxLayout* layout;
-    QSvgWidget* logo;
-    QPushButton* startButton;
+    QVBoxLayout* _layout;
+    QSvgWidget* _logo;
+    QPushButton* _startButton;
 
 signals:
     void startButtonClicked();

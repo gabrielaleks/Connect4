@@ -19,28 +19,28 @@ public:
     explicit ConfigScreen(QWidget* parent = nullptr);
 
 private:
-    QVBoxLayout* layout;
-    QLabel* configLabel;
+    QVBoxLayout* _layout;
+    QLabel* _configLabel;
 
-    QHBoxLayout* player1HorizontalLayout;
-    QLabel* player1Label;
-    QLineEdit* player1NameField;
-    QComboBox* player1ColorDropdown;
+    QHBoxLayout* _player1HorizontalLayout;
+    QLabel* _player1Label;
+    QLineEdit* _player1NameField;
+    QComboBox* _player1ColorDropdown;
 
-    QHBoxLayout* player2HorizontalLayout;
-    QLabel* player2Label;
-    QLineEdit* player2NameField;
-    QComboBox* player2ColorDropdown;
+    QHBoxLayout* _player2HorizontalLayout;
+    QLabel* _player2Label;
+    QLineEdit* _player2NameField;
+    QComboBox* _player2ColorDropdown;
 
-    QPushButton* playButton;
+    QPushButton* _playButton;
 
     QCheckBox* _onlineModeCheckbox;
     QWidget*   _onlineOptionsWidget;
     QLineEdit* _serverIpField;
     QComboBox* _roleDropdown;
 
-    int player1PrevColorIndex;
-    int player2PrevColorIndex;
+    int _player1PrevColorIndex;
+    int _player2PrevColorIndex;
 
     struct PlayerSection {
         QLabel* label;

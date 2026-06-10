@@ -1,29 +1,29 @@
 #include "ConfigScreen.h"
 
 ConfigScreen::ConfigScreen(QWidget* parent) : BaseScreen(parent) {
-    layout = new QVBoxLayout(this);
-    configLabel = new QLabel("Game configuration", this);
-    configLabel->setAlignment(Qt::AlignCenter);
+    _layout = new QVBoxLayout(this);
+    _configLabel = new QLabel("Game configuration", this);
+    _configLabel->setAlignment(Qt::AlignCenter);
     QFont font("Verdana");
     font.setPixelSize(20);
     font.setBold(true);
-    configLabel->setFont(font);
-    configLabel->setStyleSheet("color: rgb(249, 234, 164);");
+    _configLabel->setFont(font);
+    _configLabel->setStyleSheet("color: rgb(249, 234, 164);");
 
     font.setPixelSize(15);
     font.setBold(false);
 
     PlayerSection p1 = createPlayerSection("Player 1", Color::Red, font);
-    player1Label = p1.label;
-    player1HorizontalLayout = p1.horizontalLayout;
-    player1NameField = p1.nameField;
-    player1ColorDropdown = p1.colorDropdown;
+    _player1Label = p1.label;
+    _player1HorizontalLayout = p1.horizontalLayout;
+    _player1NameField = p1.nameField;
+    _player1ColorDropdown = p1.colorDropdown;
 
     PlayerSection p2 = createPlayerSection("Player 2", Color::Yellow, font);
-    player2Label = p2.label;
-    player2HorizontalLayout = p2.horizontalLayout;
-    player2NameField = p2.nameField;
-    player2ColorDropdown = p2.colorDropdown;
+    _player2Label = p2.label;
+    _player2HorizontalLayout = p2.horizontalLayout;
+    _player2NameField = p2.nameField;
+    _player2ColorDropdown = p2.colorDropdown;
 
     // Online mode
     _onlineModeCheckbox = new QCheckBox("Online mode", this);
@@ -54,55 +54,55 @@ ConfigScreen::ConfigScreen(QWidget* parent) : BaseScreen(parent) {
     connect(_serverIpField, &QLineEdit::textChanged, this, &ConfigScreen::checkIfEmpty);
 
     // Play button
-    playButton = new QPushButton("Play", this);
-    playButton->setFixedSize(80, 40);
-    playButton->setEnabled(false);
-    playButton->setStyleSheet("background-color: rgb(200, 190, 140); color: rgb(150, 80, 82);");
+    _playButton = new QPushButton("Play", this);
+    _playButton->setFixedSize(80, 40);
+    _playButton->setEnabled(false);
+    _playButton->setStyleSheet("background-color: rgb(200, 190, 140); color: rgb(150, 80, 82);");
 
     connect(
-        player1NameField,
+        _player1NameField,
         &QLineEdit::textChanged,
         this,
         &ConfigScreen::checkIfEmpty
     );
 
     connect(
-        player2NameField,
+        _player2NameField,
         &QLineEdit::textChanged,
         this,
         &ConfigScreen::checkIfEmpty
     );
 
-    player1PrevColorIndex = player1ColorDropdown->currentIndex();
-    player2PrevColorIndex = player2ColorDropdown->currentIndex();
-    setItemEnabled(player2ColorDropdown, player1PrevColorIndex, false);
-    setItemEnabled(player1ColorDropdown, player2PrevColorIndex, false);
+    _player1PrevColorIndex = _player1ColorDropdown->currentIndex();
+    _player2PrevColorIndex = _player2ColorDropdown->currentIndex();
+    setItemEnabled(_player2ColorDropdown, _player1PrevColorIndex, false);
+    setItemEnabled(_player1ColorDropdown, _player2PrevColorIndex, false);
 
-    connect(player1ColorDropdown, &QComboBox::currentIndexChanged, this, &ConfigScreen::makeChosenColorsReadOnly);
-    connect(player2ColorDropdown, &QComboBox::currentIndexChanged, this, &ConfigScreen::makeChosenColorsReadOnly);
+    connect(_player1ColorDropdown, &QComboBox::currentIndexChanged, this, &ConfigScreen::makeChosenColorsReadOnly);
+    connect(_player2ColorDropdown, &QComboBox::currentIndexChanged, this, &ConfigScreen::makeChosenColorsReadOnly);
 
     // Layout config
-    layout->addStretch(1);
-    layout->addWidget(configLabel);
-    layout->addStretch(1);
-    layout->addWidget(player1Label);
-    layout->addLayout(player1HorizontalLayout);
-    layout->addWidget(player2Label);
-    layout->addLayout(player2HorizontalLayout);
-    layout->addWidget(_onlineModeCheckbox, 0, Qt::AlignCenter);
-    layout->addWidget(_onlineOptionsWidget);
-    layout->addWidget(playButton, 0, Qt::AlignCenter);
-    layout->addStretch(2);
+    _layout->addStretch(1);
+    _layout->addWidget(_configLabel);
+    _layout->addStretch(1);
+    _layout->addWidget(_player1Label);
+    _layout->addLayout(_player1HorizontalLayout);
+    _layout->addWidget(_player2Label);
+    _layout->addLayout(_player2HorizontalLayout);
+    _layout->addWidget(_onlineModeCheckbox, 0, Qt::AlignCenter);
+    _layout->addWidget(_onlineOptionsWidget);
+    _layout->addWidget(_playButton, 0, Qt::AlignCenter);
+    _layout->addStretch(2);
 
     connect(
-        playButton,
+        _playButton,
         &QPushButton::clicked,
         this,
         &ConfigScreen::onPlayButtonClicked
     );
 
-    player1NameField->setText("Player 1");
-    player2NameField->setText("Player 2");
+    _player1NameField->setText("Player 1");
+    _player2NameField->setText("Player 2");
 }
 
 ConfigScreen::PlayerSection ConfigScreen::createPlayerSection(const QString& labelText, Color defaultColor, const QFont& font) {
@@ -139,35 +139,35 @@ ConfigScreen::PlayerSection ConfigScreen::createPlayerSection(const QString& lab
 void ConfigScreen::onPlayButtonClicked() {
     if (_onlineModeCheckbox->isChecked()) {
         emit onlinePlayButtonClicked(
-            player1NameField->text(),
-            static_cast<Color>(player1ColorDropdown->currentData().toInt()),
-            player2NameField->text(),
-            static_cast<Color>(player2ColorDropdown->currentData().toInt()),
+            _player1NameField->text(),
+            static_cast<Color>(_player1ColorDropdown->currentData().toInt()),
+            _player2NameField->text(),
+            static_cast<Color>(_player2ColorDropdown->currentData().toInt()),
             _serverIpField->text(),
             _roleDropdown->currentData().toInt()
         );
     } else {
         emit playButtonClicked(
-            player1NameField->text(),
-            static_cast<Color>(player1ColorDropdown->currentData().toInt()),
-            player2NameField->text(),
-            static_cast<Color>(player2ColorDropdown->currentData().toInt())
+            _player1NameField->text(),
+            static_cast<Color>(_player1ColorDropdown->currentData().toInt()),
+            _player2NameField->text(),
+            static_cast<Color>(_player2ColorDropdown->currentData().toInt())
         );
     }
 }
 
 void ConfigScreen::checkIfEmpty() {
-    bool namesReady = !player1NameField->text().trimmed().isEmpty()
-                   && !player2NameField->text().trimmed().isEmpty();
+    bool namesReady = !_player1NameField->text().trimmed().isEmpty()
+                   && !_player2NameField->text().trimmed().isEmpty();
     bool onlineReady = !_onlineModeCheckbox->isChecked()
                     || !_serverIpField->text().trimmed().isEmpty();
 
     if (namesReady && onlineReady) {
-        playButton->setEnabled(true);
-        playButton->setStyleSheet("background-color: rgb(249, 234, 164); color: rgb(71, 0, 2);");
+        _playButton->setEnabled(true);
+        _playButton->setStyleSheet("background-color: rgb(249, 234, 164); color: rgb(71, 0, 2);");
     } else {
-        playButton->setEnabled(false);
-        playButton->setStyleSheet("background-color: rgb(200, 190, 140); color: rgb(150, 80, 82);");
+        _playButton->setEnabled(false);
+        _playButton->setStyleSheet("background-color: rgb(200, 190, 140); color: rgb(150, 80, 82);");
     }
 }
 
@@ -181,12 +181,12 @@ void ConfigScreen::makeChosenColorsReadOnly() {
     QComboBox* other;
     int* prevIndex;
 
-    if (changed == player1ColorDropdown) {
-        other = player2ColorDropdown;
-        prevIndex = &player1PrevColorIndex;
+    if (changed == _player1ColorDropdown) {
+        other = _player2ColorDropdown;
+        prevIndex = &_player1PrevColorIndex;
     } else {
-        other = player1ColorDropdown;
-        prevIndex = &player2PrevColorIndex;
+        other = _player1ColorDropdown;
+        prevIndex = &_player2PrevColorIndex;
     }
 
     int newIndex = changed->currentIndex();

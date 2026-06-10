@@ -4,57 +4,57 @@
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent) {
-    centralWidget = new QWidget();
+    _centralWidget = new QWidget();
 
-    layout = new QVBoxLayout(centralWidget);
+    _layout = new QVBoxLayout(_centralWidget);
 
-    stack = new QStackedWidget();
+    _stack = new QStackedWidget();
 
-    author = new QLabel("Developed by Gabriel Aleksandravicius", this);
-    author->setAlignment(Qt::AlignCenter);
+    _author = new QLabel("Developed by Gabriel Aleksandravicius", this);
+    _author->setAlignment(Qt::AlignCenter);
     QFont font("Verdana");
     font.setPixelSize(10);
     font.setBold(false);
-    author->setFont(font);
+    _author->setFont(font);
 
-    startScreen = new StartScreen();
-    configScreen = new ConfigScreen();
-    gameScreen = new GameScreen();
+    _startScreen = new StartScreen();
+    _configScreen = new ConfigScreen();
+    _gameScreen = new GameScreen();
 
-    stack->addWidget(startScreen);
-    stack->addWidget(configScreen);
-    stack->addWidget(gameScreen);
+    _stack->addWidget(_startScreen);
+    _stack->addWidget(_configScreen);
+    _stack->addWidget(_gameScreen);
 
-    stack->setCurrentWidget(startScreen);
+    _stack->setCurrentWidget(_startScreen);
 
-    layout->addWidget(stack);
-    layout->addWidget(author);
+    _layout->addWidget(_stack);
+    _layout->addWidget(_author);
 
-    setCentralWidget(centralWidget);
+    setCentralWidget(_centralWidget);
 
     resize(SCREEN_SIZE, SCREEN_SIZE);
     setWindowTitle("Connect4");
 
     connect(
-        startScreen,
+        _startScreen,
         &StartScreen::startButtonClicked,
         this,
         &MainWindow::showConfigScreen);
 
     connect(
-        configScreen,
+        _configScreen,
         &ConfigScreen::playButtonClicked,
         this,
         &MainWindow::showGameScreen);
 
     connect(
-        configScreen,
+        _configScreen,
         &ConfigScreen::onlinePlayButtonClicked,
         this,
         &MainWindow::showOnlineGameScreen);
 
     connect(
-        gameScreen,
+        _gameScreen,
         &GameScreen::configButtonClicked,
         this,
         &MainWindow::showConfigScreen);
@@ -65,8 +65,8 @@ MainWindow::~MainWindow() = default;
 void MainWindow::showConfigScreen() {
     delete _networkClient;
     _networkClient = nullptr;
-    gameScreen->setNetworkClient(nullptr, 0);
-    stack->setCurrentWidget(configScreen);
+    _gameScreen->setNetworkClient(nullptr, 0);
+    _stack->setCurrentWidget(_configScreen);
 }
 
 void MainWindow::showGameScreen(
@@ -74,13 +74,13 @@ void MainWindow::showGameScreen(
     Color player1Color,
     QString player2Name,
     Color player2Color) {
-    gameScreen->setNetworkClient(nullptr, 0);
-    gameScreen->reset();
-    gameScreen->setPlayer1(player1Name.toStdString(), player1Color);
-    gameScreen->setPlayer2(player2Name.toStdString(), player2Color);
-    gameScreen->setActivePlayer(gameScreen->getPlayer1());
+    _gameScreen->setNetworkClient(nullptr, 0);
+    _gameScreen->reset();
+    _gameScreen->setPlayer1(player1Name.toStdString(), player1Color);
+    _gameScreen->setPlayer2(player2Name.toStdString(), player2Color);
+    _gameScreen->setActivePlayer(_gameScreen->getPlayer1());
 
-    stack->setCurrentWidget(gameScreen);
+    _stack->setCurrentWidget(_gameScreen);
 }
 
 void MainWindow::showOnlineGameScreen(
@@ -97,11 +97,11 @@ void MainWindow::showOnlineGameScreen(
         QMessageBox::warning(this, "Network error", msg);
     });
 
-    gameScreen->reset();
-    gameScreen->setPlayer1(player1Name.toStdString(), player1Color);
-    gameScreen->setPlayer2(player2Name.toStdString(), player2Color);
-    gameScreen->setNetworkClient(_networkClient, localPlayerIndex);
-    gameScreen->setActivePlayer(gameScreen->getPlayer1());
+    _gameScreen->reset();
+    _gameScreen->setPlayer1(player1Name.toStdString(), player1Color);
+    _gameScreen->setPlayer2(player2Name.toStdString(), player2Color);
+    _gameScreen->setNetworkClient(_networkClient, localPlayerIndex);
+    _gameScreen->setActivePlayer(_gameScreen->getPlayer1());
 
-    stack->setCurrentWidget(gameScreen);
+    _stack->setCurrentWidget(_gameScreen);
 }

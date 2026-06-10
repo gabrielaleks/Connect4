@@ -3,10 +3,10 @@
 #include <QMessageBox>
 
 GameScreen::GameScreen(QWidget* parent) : BaseScreen(parent) {
-    layout = new QVBoxLayout(this);
+    _layout = new QVBoxLayout(this);
 
-    boardWidget = new BoardWidget(this);
-    boardWidget->setSizePolicy(
+    _boardWidget = new BoardWidget(this);
+    _boardWidget->setSizePolicy(
         QSizePolicy::Expanding,
         QSizePolicy::Expanding
     );
@@ -19,18 +19,18 @@ GameScreen::GameScreen(QWidget* parent) : BaseScreen(parent) {
     _goBackToConfigButton->setFixedSize(100, 30);
     _goBackToConfigButton->setStyleSheet("background-color: rgb(200, 190, 140); color: rgb(150, 80, 82);");
 
-    layout->addSpacing(TOP_AREA_HEIGHT);
-    layout->addWidget(boardWidget);
+    _layout->addSpacing(TOP_AREA_HEIGHT);
+    _layout->addWidget(_boardWidget);
 
     QHBoxLayout* buttonsLayout = new QHBoxLayout();
     buttonsLayout->addStretch();
     buttonsLayout->addWidget(_resetButton);
     buttonsLayout->addWidget(_goBackToConfigButton);
     buttonsLayout->addStretch();
-    layout->addLayout(buttonsLayout);
+    _layout->addLayout(buttonsLayout);
 
     connect(
-        boardWidget,
+        _boardWidget,
         &BoardWidget::columnSelected,
         this,
         [this](int col) { handleColumnSelection(col, false); }
@@ -94,17 +94,17 @@ void GameScreen::handleColumnSelection(int selectedColumn, bool fromNetwork) {
     if (isWinner) {
         updateTopText(QString::fromStdString(_activePlayer.name) + " won the game!");
         _gameOver = true;
-        boardWidget->setGameOver(true);
+        _boardWidget->setGameOver(true);
     } else if (_piecesPlacedCounter == ROW_COUNT * COLUMN_COUNT) {
         updateTopText("It was a draw", Color::White);
         _gameOver = true;
-        boardWidget->setGameOver(true);
+        _boardWidget->setGameOver(true);
     } else {
         setActivePlayer(_activePlayer.index == 1 ? _player2 : _player1);
     }
 
-    boardWidget->setGameState(_gameState);
-    boardWidget->update();
+    _boardWidget->setGameState(_gameState);
+    _boardWidget->update();
 }
 
 bool GameScreen::isWinner(int row, int column) {
@@ -154,7 +154,7 @@ void GameScreen::setPlayer1(
     _player1.index = 1;
     _player1.name = name;
     _player1.color = color;
-    boardWidget->setPlayer1Color(color);
+    _boardWidget->setPlayer1Color(color);
 }
 
 void GameScreen::setPlayer2(
@@ -164,7 +164,7 @@ void GameScreen::setPlayer2(
     _player2.index = 2;
     _player2.name = name;
     _player2.color = color;
-    boardWidget->setPlayer2Color(color);
+    _boardWidget->setPlayer2Color(color);
 }
 
 GameScreen::Player GameScreen::getPlayer1() {
@@ -178,7 +178,7 @@ GameScreen::Player GameScreen::getPlayer2() {
 void GameScreen::setActivePlayer(GameScreen::Player activePlayer) {
     _activePlayer = activePlayer;
     GameScreen::updateTopText(QString::fromStdString(_activePlayer.name) + "'s turn");
-    boardWidget->setActivePlayerIndex(activePlayer.index);
+    _boardWidget->setActivePlayerIndex(activePlayer.index);
 }
 
 void GameScreen::updateTopText(QString text, std::optional<Color> color) {
@@ -215,9 +215,9 @@ void GameScreen::reset() {
     memset(_gameState, CellState::Empty, sizeof(_gameState));
     _gameOver = false;
     _piecesPlacedCounter = 0;
-    boardWidget->setGameOver(false);
-    boardWidget->setGameState(_gameState);
-    boardWidget->update();
+    _boardWidget->setGameOver(false);
+    _boardWidget->setGameState(_gameState);
+    _boardWidget->update();
 }
 
 void GameScreen::paintEvent(QPaintEvent* event) {

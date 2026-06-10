@@ -26,8 +26,8 @@ private:
         CellState playerState
     );
 
-    BoardWidget* boardWidget;
-    QVBoxLayout* layout;
+    BoardWidget* _boardWidget;
+    QVBoxLayout* _layout;
 
     QString _topText;
     QColor _topColor;

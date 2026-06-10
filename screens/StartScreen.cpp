@@ -2,27 +2,27 @@
 
 
 StartScreen::StartScreen(QWidget* parent) : BaseScreen(parent) {
-    layout = new QVBoxLayout(this);
+    _layout = new QVBoxLayout(this);
 
-    logo = new QSvgWidget(":/assets/logo.svg");
-    QSize originalSize = logo->renderer()->defaultSize();
-    logo->setFixedSize(originalSize * 0.8);
+    _logo = new QSvgWidget(":/assets/logo.svg");
+    QSize originalSize = _logo->renderer()->defaultSize();
+    _logo->setFixedSize(originalSize * 0.8);
 
     QFont font("Verdana");
-    startButton = new QPushButton("Start", this);
-    startButton->setFixedSize(100, 50);
+    _startButton = new QPushButton("Start", this);
+    _startButton->setFixedSize(100, 50);
     font.setPixelSize(20);
     font.setBold(false);
-    startButton->setFont(font);
-    startButton->setStyleSheet("background-color: rgb(249, 234, 164); color: rgb(71, 0, 2);");
+    _startButton->setFont(font);
+    _startButton->setStyleSheet("background-color: rgb(249, 234, 164); color: rgb(71, 0, 2);");
 
-    layout->addStretch();
-    layout->addWidget(logo, 0, Qt::AlignCenter);
-    layout->addWidget(startButton, 0, Qt::AlignCenter);
-    layout->addStretch();
+    _layout->addStretch();
+    _layout->addWidget(_logo, 0, Qt::AlignCenter);
+    _layout->addWidget(_startButton, 0, Qt::AlignCenter);
+    _layout->addStretch();
 
     connect(
-        startButton,
+        _startButton,
         &QPushButton::clicked,
         this,
         &StartScreen::startButtonClicked
