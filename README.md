@@ -1,5 +1,7 @@
 # Connect4
 
+![logo](assets/logo.svg)
+
 A Connect4 game built in C++ with Qt6, supporting local two-player and online multiplayer modes.
 
 ## Requirements
